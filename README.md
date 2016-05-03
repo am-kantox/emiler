@@ -1,7 +1,7 @@
 # Emiler
 
 Naïve distance calculation for emails. Returns “similar” basing on artificial
-name and domain comparison.
+name and domain comparison. [![Build Status](https://travis-ci.org/am-kantox/emiler.svg?branch=master)](https://travis-ci.org/am-kantox/emiler)
 
 ## Installation
 
