@@ -1,0 +1,53 @@
+inherit_from: .rubocop_todo.yml
+
+Style/HashSyntax:
+  EnforcedStyle: ruby19
+
+Style/MethodDefParentheses:
+  Exclude:
+    - 'lib/**/*'
+    - 'spec/**/*'
+
+Style/AsciiIdentifiers:
+  Exclude:
+    - 'lib/**/*'
+    - 'spec/**/*'
+
+Style/AsciiComments:
+  Exclude:
+    - 'lib/**/*'
+    - 'spec/**/*'
+
+Style/Documentation:
+  Exclude:
+    - 'lib/**/*'
+    - 'spec/**/*'
+
+Style/RaiseArgs:
+  Exclude:
+    - 'lib/**/*'
+
+Style/SpecialGlobalVars:
+  Exclude:
+    - 'lib/**/*'
+    - 'spec/**/*'
+
+Style/MultilineBlockChain:
+  Exclude:
+    - 'lib/**/*'
+    - 'spec/**/*'
+
+Metrics/ClassLength:
+  Max: 200
+
+Metrics/CyclomaticComplexity:
+  Max: 20
+
+Metrics/LineLength:
+  Max: 180
+
+Metrics/MethodLength:
+  Max: 42
+
+Metrics/PerceivedComplexity:
+  Max: 20
