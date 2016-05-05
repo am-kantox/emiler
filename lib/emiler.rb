@@ -1,24 +1,21 @@
 require 'emiler/version'
-require 'fuzzystringmatch'
+require 'emiler/jarowinkler'
 
 module Emiler
-  USE_PURE = ENV['USE_PURE_JW']
   INEXACT_MATCH_COEFFICIENT = ENV['INEXACT_MATCH_COEFFICIENT'] || 0.8
   RAISE_ON_MALFORMED_EMAIL = ENV['RAISE_ON_MALFORMED_EMAIL']
 
   class JW
     attr_reader :jw
-    def initialize matcher = :native
-      @jw = FuzzyStringMatch::JaroWinkler.create(matcher)
+    def initialize
+      @jw = FuzzyStringMatch::JaroWinklerPure.new
     end
 
     def distance s1, s2
       @jw.getDistance s1, s2
     end
 
-    NATIVE = JW.new
-    PURE = USE_PURE ? JW.new(:pure) : nil
-    MATCHER = PURE || NATIVE
+    MATCHER = JW.new
     DUMMY = { jw: 0, full: 0, name: 0, domain: 0, result: false }.freeze
 
     private :initialize
@@ -32,7 +29,7 @@ module Emiler
 
   # rubocop:disable Metrics/AbcSize
   def similarity e1, e2
-    e1, e2 = [e1, e2].map(&:downcase)
+    e1, e2 = [e1, e2].map(&:to_s).map(&:downcase)
     em1, em2 = [e1, e2].map { |e| e.split '@' }
 
     if em1.size != 2 || em2.size != 2

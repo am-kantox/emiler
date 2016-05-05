@@ -54,5 +54,12 @@ describe Emiler do
     it 'returns no match for different things' do
       expect(nothing_similar[:full]).to be < 0.4
     end
+
+    it 'returns null for malformed emails' do
+      expect(Emiler.similarity('example.com', 'abcdefgh@zzzzzz.zz')[:full]).to eq(0)
+      expect(Emiler.similarity('', 'abcdefgh@zzzzzz.zz')[:full]).to eq(0)
+      expect(Emiler.similarity(5, 'abcdefgh@zzzzzz.zz')[:full]).to eq(0)
+      expect(Emiler.similarity(nil, 'abcdefgh@zzzzzz.zz')[:full]).to eq(0)
+    end
   end
 end
