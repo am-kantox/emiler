@@ -1,7 +1,12 @@
 # Emiler
 
 Naïve distance calculation for emails. Returns “similar” basing on artificial
-name and domain comparison. [![Build Status](https://travis-ci.org/am-kantox/emiler.svg?branch=master)](https://travis-ci.org/am-kantox/emiler)
+name and domain comparison.
+
+[![Build Status](https://travis-ci.org/am-kantox/emiler.svg?branch=master)](https://travis-ci.org/am-kantox/emiler)
+[![Code Climate](https://codeclimate.com/github/am-kantox/emiler/badges/gpa.svg)](https://codeclimate.com/github/am-kantox/emiler)
+[![Test Coverage](https://codeclimate.com/github/am-kantox/emiler/badges/coverage.svg)](https://codeclimate.com/github/am-kantox/emiler/coverage)
+[![Issue Count](https://codeclimate.com/github/am-kantox/emiler/badges/issue_count.svg)](https://codeclimate.com/github/am-kantox/emiler)
 
 ## Installation
 
