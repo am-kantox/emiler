@@ -23,7 +23,9 @@ module FuzzyStringMatch
       true
     end
 
-    def getDistance(s1, s2)
+    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength
+    def get_distance(s1, s2)
       a1 = s1.split(//)
       a2 = s2.split(//)
 
@@ -36,10 +38,7 @@ module FuzzyStringMatch
       matches = 0
       (0...min.size).each do |mi|
         c1 = min[mi]
-        xi = [mi - range, 0].max
-        xn = [mi + range + 1, max.size].min
-
-        (xi...xn).each do |i|
+        ([mi - range, 0].max...[mi + range + 1, max.size].min).each do |i|
           next unless !flags[i] && c1 == max[i]
 
           indexes[mi] = i
@@ -88,5 +87,7 @@ module FuzzyStringMatch
         return j < THRESHOLD ? j : j + [0.1, 1.0 / max.size].min * prefix * (1 - j)
       end
     end
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize
   end
 end

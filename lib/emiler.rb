@@ -12,7 +12,7 @@ module Emiler
     end
 
     def distance s1, s2
-      @jw.getDistance s1, s2
+      @jw.get_distance s1, s2
     end
 
     MATCHER = JW.new
@@ -51,9 +51,9 @@ module Emiler
            else INEXACT_MATCH_COEFFICIENT / 2.0 * JW::MATCHER.distance(em1.first, em2.first)
            end
 
-    full = domain * 0.2 + name * 0.8
+    full = domain * (1.0 - INEXACT_MATCH_COEFFICIENT) + name * INEXACT_MATCH_COEFFICIENT
 
-    { jw: jw, full: full, name: name, domain: domain, result: full >= 0.64 }
+    { jw: jw, full: full, name: name, domain: domain, result: full >= INEXACT_MATCH_COEFFICIENT * INEXACT_MATCH_COEFFICIENT }
   end
   # rubocop:enable Metrics/AbcSize
 
