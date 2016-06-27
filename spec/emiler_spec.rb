@@ -5,7 +5,7 @@ describe Emiler do
     expect(Emiler::VERSION).not_to be nil
   end
 
-  describe '#similarity' do
+  describe '#similarity_email' do
     let!(:exact) { { jw: 1, full: 1, name: 1, domain: 1, result: true } }
 
     let!(:same) { Emiler.similarity('a@example.com', 'a@example.com') }
