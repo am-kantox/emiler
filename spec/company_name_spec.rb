@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Emiler do
   describe '#similarity_company_name' do
-    let!(:exact) { { jw: 1, full: 1, result: true } }
+    let!(:exact) { { jw: 1.0, full: 1.0, distances: [1.0, 1.0], matches: 2, result: true } }
 
     let!(:same) { Emiler.similarity('HOLLYWOOD LTD', 'HOLLYWOOD LTD', type: :company_name) }
     let!(:same_no_case) { Emiler.similarity('HOLLYWOOD LTD', 'Hollywood LTD', type: :company_name) }

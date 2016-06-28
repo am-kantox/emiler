@@ -1,6 +1,8 @@
 require 'emiler/version'
 require 'emiler/jarowinkler'
 
+require 'phone'
+
 module Emiler
   INEXACT_MATCH_COEFFICIENT = ENV['INEXACT_MATCH_COEFFICIENT'] || 0.8
   RAISE_ON_MALFORMED_EMAIL = ENV['RAISE_ON_MALFORMED_EMAIL']
@@ -37,9 +39,17 @@ module Emiler
 
     private
 
+    # stub for unknown types; returns empty hash for `similarity` to return jaro-winkler distance only
+    def similarity_default(*)
+      { result: nil }
+    end
+
     # similarity for company names
     def similarity_company_name c1, c2
-      return { full: 1.0, result: true } if c1 == c2 # exact match
+      return { full: 1.0,
+               distances: [1.0] * c1.split(/\s+/).size,
+               matches: c1.split(/\s+/).size,
+               result: true } if c1 == c2 # exact match
 
       c1, c2 = [c1, c2].map { |c| c.split(/\s+/).reject(&COMPANY_NAME_STOP_WORDS.method(:include?)) }
       return { full: 1.0 - (1.0 - INEXACT_MATCH_COEFFICIENT) / 2.0, name: 1.0, result: true } if c1 == c2 # match without stopwords
@@ -53,14 +63,52 @@ module Emiler
       { full: average, distances: dists, matches: dists.count(1.0), result: false }
     end
 
-    # stub for unknown types; returns empty hash for `similarity` to return jaro-winkler distance only
-    def similarity_default(*)
-      {}
+    # similarity for phone numbers
+    def similarity_phone p1, p2
+      return { full: 1.0,
+               distances: [1.0],
+               result: true } if p1 == p2 # exact match
+
+      p1, p2 = [p1, p2].map { |p| p.split(/[,;]/) }
+                       .map do |p|
+                         p.map do |e|
+                           phone = e.delete('^0-9')
+                           phone = case phone.length
+                                   when 0..6 then phone
+                                   when 7 then "+3493#{phone}" # consider Barcelona
+                                   when 8..9 then "+34#{phone}" # consider Spain
+                                   else "+#{phone}"
+                                   end
+                           # rubocop:disable Style/RescueModifier
+                           Phoner::Phone.parse(phone) rescue nil # Phoner::CountryCodeError
+                           # rubocop:enable Style/RescueModifier
+                         end.compact
+                       end
+
+      dists = p1.product(p2)
+                .reject do |(pp1, pp2)|
+                  pp1.country_code != pp2.country_code ||
+                    pp1.area_code != pp2.area_code ||
+                    pp1.number[0...-2] != pp2.number[0...-2]
+                end.map do |(pp1, pp2)|
+                  case
+                  when pp1.number[-2..-1] == pp2.number[-2..-1] then 1.0
+                  when pp1.number[-2] == pp2.number[-2] then 0.9
+                  else 0.8
+                  end
+                end.sort.reverse
+
+      { full: dists.first || 0.0, distances: dists, result: dists.first && dists.first >= INEXACT_MATCH_COEFFICIENT }
     end
 
     # rubocop:disable Metrics/AbcSize
     # similarity for emails
     def similarity_email e1, e2
+      return { full: 1.0,
+               name: 1.0,
+               domain: 1.0,
+               result: true } if e1 == e2
+
       em1, em2 = [e1, e2].map { |e| e.split '@' }
       if em1.size != 2 || em2.size != 2
         raise MalformedEmailError.new(e1, e2) if RAISE_ON_MALFORMED_EMAIL
